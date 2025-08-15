@@ -6,7 +6,7 @@ export class AudioManager {
   private async initializeAudioContext(): Promise<void> {
     if (!this.isInitialized && this.isEnabled) {
       try {
-        this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+        this.audioContext = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
         
         if (this.audioContext.state === 'suspended') {
           await this.audioContext.resume()
