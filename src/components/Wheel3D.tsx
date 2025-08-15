@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from 'react'
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Text, PerspectiveCamera } from '@react-three/drei'
 import { Group, Mesh, Color } from 'three'
@@ -177,7 +177,7 @@ export default function Wheel3D({ onSegmentClick, onSpin }: Wheel3DProps) {
   const { isSpinning, wheel, addToHistory, setLastResult, setSpinning } = useWheelStore()
   const [spinPhysics, setSpinPhysics] = useState<SpinPhysics | null>(null)
 
-  const handleSpin = async () => {
+  const handleSpin = useCallback(async () => {
     if (isSpinning) return
 
     const segments = wheel.segments.filter(seg => seg.enabled)
@@ -197,7 +197,7 @@ export default function Wheel3D({ onSegmentClick, onSpin }: Wheel3DProps) {
     
     setSpinPhysics(physics)
     onSpin()
-  }
+  }, [isSpinning, wheel.segments, setSpinning, onSpin])
 
   const handleSpinComplete = async (segment: WheelSegment) => {
     setSpinning(false)
@@ -219,7 +219,7 @@ export default function Wheel3D({ onSegmentClick, onSpin }: Wheel3DProps) {
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [isSpinning])
+  }, [handleSpin])
 
   return (
     <div className="wheel-container" style={{ width: '100%', height: '500px', position: 'relative' }}>

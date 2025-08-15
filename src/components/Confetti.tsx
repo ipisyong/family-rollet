@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback, useMemo } from 'react'
 
 interface ConfettiParticle {
   x: number
@@ -28,15 +28,16 @@ export default function Confetti({ isActive, duration = 4000, particleCount = 80
   const startTimeRef = useRef<number | undefined>(undefined)
 
   // Modern vibrant colors for dark theme
-  const colors = [
+  const colors = useMemo(() => [
     '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444',
     '#ec4899', '#6366f1', '#84cc16', '#f97316', '#06b6d4',
     '#a855f7', '#059669', '#eab308', '#dc2626', '#be185d'
-  ]
+  ], [])
 
-  const shapes: Array<'circle' | 'square' | 'triangle' | 'star'> = ['circle', 'square', 'triangle', 'star']
+  const shapes = useMemo((): Array<'circle' | 'square' | 'triangle' | 'star'> => 
+    ['circle', 'square', 'triangle', 'star'], [])
 
-  const createParticle = (): ConfettiParticle => {
+  const createParticle = useCallback((): ConfettiParticle => {
     const canvas = canvasRef.current
     if (!canvas) {
       return {
@@ -63,7 +64,7 @@ export default function Confetti({ isActive, duration = 4000, particleCount = 80
       fadeSpeed: Math.random() * 0.02 + 0.005,
       shape: shapes[Math.floor(Math.random() * shapes.length)]
     }
-  }
+  }, [colors, shapes])
 
   const drawParticle = (ctx: CanvasRenderingContext2D, particle: ConfettiParticle) => {
     ctx.save()
@@ -128,7 +129,7 @@ export default function Confetti({ isActive, duration = 4000, particleCount = 80
     particle.vy *= 0.999
   }
 
-  const animate = (currentTime: number) => {
+  const animate = useCallback((currentTime: number) => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
@@ -158,16 +159,12 @@ export default function Confetti({ isActive, duration = 4000, particleCount = 80
                particle.opacity > 0
       })
 
-      animationRef.current = requestAnimationFrame(animateWrapper)
+      animationRef.current = requestAnimationFrame((time) => animate(time))
     } else {
       particlesRef.current = []
       startTimeRef.current = undefined
     }
-  }
-
-  const animateWrapper = (currentTime: number) => {
-    animate(currentTime)
-  }
+  }, [duration, isActive, particleCount, createParticle])
 
   const resizeCanvas = () => {
     const canvas = canvasRef.current
@@ -190,7 +187,7 @@ export default function Confetti({ isActive, duration = 4000, particleCount = 80
     if (isActive) {
       startTimeRef.current = undefined
       particlesRef.current = []
-      animationRef.current = requestAnimationFrame(animateWrapper)
+      animationRef.current = requestAnimationFrame(animate)
     } else {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
@@ -202,7 +199,7 @@ export default function Confetti({ isActive, duration = 4000, particleCount = 80
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isActive])
+  }, [isActive, animate])
 
   if (!isActive) return null
 

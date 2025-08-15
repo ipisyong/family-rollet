@@ -31,7 +31,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/rollet-games/',
+  base: '/family-rollet/',
   build: {
     target: 'es2020',
     rollupOptions: {
