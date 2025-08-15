@@ -35,7 +35,7 @@ import { chromium } from 'playwright';
     });
     
     try {
-      await device.page.goto('http://localhost:5174/rollet-games/', { timeout: 10000 });
+      await device.page.goto('http://localhost:5173/', { timeout: 10000 });
       await device.page.waitForTimeout(2000);
       
       // Take screenshot

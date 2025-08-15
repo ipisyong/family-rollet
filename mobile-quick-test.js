@@ -10,7 +10,7 @@ import { chromium } from 'playwright';
   console.log('Testing mobile layout...');
   
   try {
-    await page.goto('http://localhost:5174/rollet-games/', { timeout: 8000 });
+    await page.goto('http://localhost:5173/', { timeout: 8000 });
     await page.waitForTimeout(2000);
     
     // Take mobile screenshot
