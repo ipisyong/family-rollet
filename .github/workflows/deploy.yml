@@ -35,6 +35,13 @@ jobs:
 
       - name: Build
         run: npm run build
+        
+      - name: List build output
+        run: |
+          echo "Build output:"
+          ls -la dist/
+          echo "Generated index.html:"
+          head -20 dist/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

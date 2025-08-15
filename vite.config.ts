@@ -34,6 +34,7 @@ export default defineConfig({
   base: '/family-rollet/',
   build: {
     target: 'es2020',
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
         manualChunks: {
